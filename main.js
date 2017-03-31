@@ -1,7 +1,28 @@
 const FSWatcher = require('./watcher.js');
 const _ = require('underscore');
 
-let Figurecon = function (file, defaults) {
+function Figurecon(key, defaults) {
+  if(typeof defaults === 'object')
+    return Figurecon.init(...arguments);
+  return Figurecon.get(...arguments);
+}
+
+Figurecon.get = function (key, def) {
+  if (typeof def === 'undefined') {
+    def = this.defaults.get(key);
+  }
+  let parts = key.split('.');
+  let o = this.config;
+  while (parts.length > 0) {
+    if (typeof o !== 'object') {
+      return def;
+    }
+    o = o[parts.shift()];
+  }
+  return (typeof o !== 'undefined') ? o : def;
+};
+
+Figurecon.init = function (file, defaults) {
   this.defaults = defaults;
   this.hooks = {};
   let self = this;
@@ -23,31 +44,17 @@ let Figurecon = function (file, defaults) {
       acc[key] = c(key);
       return acc;
     }, {});
-        self.config = require(id);
+    self.config = require(id);
     _(keys).each((_1, key) => {
       self.hooks[key].forEach((hook) => {
         hook(c(key), oldConfig[key], key);
       });
     });
   }) || {};
+  return this;
 };
 
-Figurecon.prototype.get = function (key, def) {
-  if (typeof def === 'undefined') {
-    def = this.defaults.get(key);
-  }
-  let parts = key.split('.');
-  let o = this.config;
-  while (parts.length > 0) {
-    if (typeof o !== 'object') {
-      return def;
-    }
-    o = o[parts.shift()];
-  }
-  return (typeof o !== 'undefined') ? o : def;
-};
-
-Figurecon.prototype.on = function(key, hook) {
+Figurecon.on = function(key, hook) {
   if (typeof hook !== 'function') {
     return this;
   }

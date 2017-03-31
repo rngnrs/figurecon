@@ -26,7 +26,7 @@ module.exports = class FSWatcher extends EventEmitter {
     this.resetWatcher();
   }
 
-  async resetWatcher() {
+  resetWatcher() {
     if (this.watcher) {
       this.watcher.removeAllListeners('change');
       this.watcher.close();
