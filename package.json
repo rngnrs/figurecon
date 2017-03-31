@@ -1,0 +1,25 @@
+{
+  "name": "figurecon",
+  "version": "0.1.0",
+  "description": "Simple real-time updating configuration module",
+  "author": "rngnrs",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rngnrs/figurecon"
+  },
+  "bugs": {
+    "url": "https://github.com/rngnrs/figurecon/issues"
+  },
+  "homepage": "https://github.com/rngnrs/figurecon",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": ">= 7.6.0"
+  }
+}

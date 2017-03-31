@@ -1,0 +1,9 @@
+{
+  "host": "hostname",
+  "port": 8080,
+  "some": {
+    "nested": {
+      "value": 42
+    }
+  }
+}
