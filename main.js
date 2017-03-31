@@ -47,4 +47,18 @@ Figurecon.prototype.get = function (key, def) {
   return (typeof o !== 'undefined') ? o : def;
 };
 
+Figurecon.prototype.on = function(key, hook) {
+  if (typeof hook !== 'function') {
+    return this;
+  }
+  let list = this.hooks[key];
+  if (!list) {
+    list = [];
+    this.hooks[key] = list;
+  }
+  list.push(hook);
+  return this;
+};
+
 module.exports = Figurecon;
+module.exports.watcher = FSWatcher;
