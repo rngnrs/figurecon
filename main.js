@@ -2,7 +2,7 @@ const FSWatcher = require('./watcher.js');
 const _ = require('underscore');
 
 function Figurecon(key, defaults) {
-  if(typeof defaults === 'object')
+  if(defaults && defaults.toString() === '[object Map]')
     return Figurecon.init(...arguments);
   return Figurecon.get(...arguments);
 }
