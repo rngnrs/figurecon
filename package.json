@@ -1,12 +1,12 @@
 {
   "name": "figurecon",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Simple real-time updating configuration module",
   "author": "rngnrs",
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "test": "node test.js"
+    "test": "mocha tests/*"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,13 @@
   },
   "homepage": "https://github.com/rngnrs/figurecon",
   "dependencies": {
-    "underscore": "^1.8.3"
+    "deep-diff": "^0.3.8",
+    "node-watch": "^0.5.5"
   },
   "engines": {
     "node": ">= 7.6.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.2"
   }
 }
