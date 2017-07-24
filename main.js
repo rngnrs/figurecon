@@ -1,71 +1,100 @@
-const FSWatcher = require('./watcher.js');
-const _ = require('underscore');
+const fs = require('fs');
+const path = require('path');
+const diff = require('deep-diff');
+const watch = require('node-watch');
 
-function Figurecon(key, defaults) {
-  if(defaults && defaults.toString() === '[object Map]')
-    return Figurecon.init(...arguments);
-  return Figurecon.get(...arguments);
+function Figurecon(key, def, logger) {
+  logger = logger || console.log;
+  let defaults = def;
+  try {
+    this.config = require(path.resolve(key));
+  } catch (e) {
+    this.config = {};
+    logger('Syntax error?');
+  }
+  this.hooks = {};
+
+  watch(key, (eventType, fileName) => {
+    if (eventType !== 'update') {
+      return true;
+    }
+    let config = {};
+    try {
+      let id = require.resolve(path.resolve(fileName));
+      delete require.cache[id];
+      config = require(path.resolve(fileName));
+    } catch (e) {
+      return logger('Syntax error?');
+    }
+    let Diff = diff(this.config, config);
+    if (!Diff) {
+      return true;
+    }
+    for (let edit of Diff) {
+      this.set(edit.path.join('.'), edit.rhs);
+    }
+  });
+
+  this.get = (key, def) => {
+    if (typeof def === 'undefined') {
+      def = defaults[key];
+    }
+    let config = deepFind(this.config, key);
+    return (typeof config !== 'undefined')
+      ? config
+      : def;
+  };
+
+  this.set = (key, value) => {
+    if (this.hooks[key]) {
+      for (let hook of this.hooks[key]) {
+        hook(key, this.get(key), value);
+      }
+    }
+    deepSet(this.config, key, value);
+  };
+
+  this.on = (key, hook) => {
+    if (typeof hook !== 'function') {
+      return this;
+    }
+    let list = this.hooks[key];
+    if (!list) {
+      list = [];
+      this.hooks[key] = list;
+    }
+    list.push(hook);
+    return this;
+  };
 }
 
-Figurecon.get = function (key, def) {
-  if (typeof def === 'undefined') {
-    def = this.defaults.get(key);
-  }
-  let parts = key.split('.');
-  let o = this.config;
-  while (parts.length > 0) {
-    if (typeof o !== 'object') {
-      return def;
-    }
-    o = o[parts.shift()];
-  }
-  return (typeof o !== 'undefined') ? o : def;
-};
+function deepFind(obj, path) {
+  let ref = obj;
 
-Figurecon.init = function (file, defaults) {
-  this.defaults = defaults;
-  this.hooks = {};
-  let self = this;
-  this.config = FSWatcher.createWatchedResource(file, (path) => {
-    return require(path);
-  }, async function(path) {
-    let oldConfig = self.config;
-    let id = require.resolve(path);
-    if (require.cache.hasOwnProperty(id)) {
-      delete require.cache[id];
+  path.toString().split('.').forEach(function (key) {
+    if (ref) {
+      ref = ref[key];
     }
-    let keys = _(oldConfig).reduce((acc, _1, key) => {
-      acc[key] = true;
-      return acc;
-    }, {});
-    _(self.config).each((_1, key) => { keys[key] = true; });
-    keys = _(keys).pick((_1, key) => { return self.hooks.hasOwnProperty(key); });
-    oldConfig = _(keys).reduce((acc, _1, key) => {
-      acc[key] = c(key);
-      return acc;
-    }, {});
-    self.config = require(id);
-    _(keys).each((_1, key) => {
-      self.hooks[key].forEach((hook) => {
-        hook(c(key), oldConfig[key], key);
-      });
-    });
-  }) || {};
-  return this;
-};
+  });
 
-Figurecon.on = function(key, hook) {
-  if (typeof hook !== 'function') {
-    return this;
-  }
-  let list = this.hooks[key];
-  if (!list) {
-    list = [];
-    this.hooks[key] = list;
-  }
-  list.push(hook);
-  return this;
-};
+  return ref;
+}
+
+function deepSet(obj, path, value) {
+  let ref = obj;
+
+  path.toString().split('.').forEach(function (key, index, arr) {
+    let last = (index === arr.length - 1);
+    if (last && typeof value === 'undefined') {
+      delete ref[key];
+      return ref;
+    }
+    ref = ref[key] = last
+      ? value
+      : {};
+  });
+
+  return obj;
+}
 
 module.exports = Figurecon;
-module.exports.watcher = FSWatcher;
