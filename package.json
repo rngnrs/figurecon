@@ -1,6 +1,6 @@
 {
   "name": "figurecon",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple real-time updating configuration module",
   "author": "rngnrs",
   "main": "main.js",
