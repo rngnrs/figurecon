@@ -1,6 +1,11 @@
+0.3.0 / 2017-07-29
+===================
+  * Add possibility of getting by `config()` or `config.get()`
+  * Add possibility to disable a hook
+  * Fix nested hooks
+
 0.2.0 / 2017-07-24
 ===================
-
   * Add some dependencies
     - Change FS.watch to `node-watch` module
     - Compare config arrays with `deep-diff` module
@@ -9,10 +14,8 @@
     
 0.1.1 / 2017-03-31
 ===================
-
   * Refactor
   
 0.1.0 / 2017-03-31
 ===================
-
   * Initial commit
