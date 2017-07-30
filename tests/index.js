@@ -61,7 +61,7 @@ describe('Figurecon', function () {
   });
 
   function onChange(key, oldValue, newValue) {
-    console.log(key + ': I\'m changed from ' + oldValue + ' to ' + newValue);
+    console.log(key + ': I\'m changed from ' + JSON.stringify(oldValue) + ' to ' + JSON.stringify(newValue));
   }
 
   function onChangeLocal(key, oldValue, newValue) {

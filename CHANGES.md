@@ -1,3 +1,7 @@
+0.3.1 / 2017-07-30
+===================
+  * Fix hooks
+  
 0.3.0 / 2017-07-29
 ===================
   * Add possibility of getting by `config()` or `config.get()`

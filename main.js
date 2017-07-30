@@ -7,13 +7,14 @@ function Wrapper(key, def, logger) {
   return Figurecon.init(key, def, logger || console.log);
 }
 
-function Figurecon(key, def, logger) {
+function Figurecon(key, def) {
   return Figurecon.get(...arguments);
 }
 
 Figurecon.init = (key, def, logger) => {
   Figurecon.defaults = def;
   Figurecon.hooks = {};
+  Figurecon.logger = logger;
   try {
     Figurecon.config = require(path.resolve(key));
   } catch (e) {
@@ -55,23 +56,22 @@ Figurecon.get = (key, def) => {
 };
 
 Figurecon.set = (key, value) => {
-  let part = [];
+  let array = [];
   if (Figurecon(key) === value) {
     return false;
   }
+  let config = JSON.parse(JSON.stringify(Figurecon.config));
+  deepSet(Figurecon.config, key, value);
   key.toString().split('.').forEach(function (k, i) {
-    let array = i
-      ? part.split('.')
-      : part;
     array.push(k);
-    part = array.join('.');
+    let part = array.join('.');
     if (Figurecon.hooks[part]) {
       for (let hook of Figurecon.hooks[part]) {
-        hook(key, Figurecon(key), value);
+        let obj = Figurecon(part) || {};
+        hook(part, deepFind(config, part), obj);
       }
     }
   });
-  deepSet(Figurecon.config, key, value);
   return true;
 };
 
@@ -120,6 +120,7 @@ function deepSet(obj, path, value) {
     }
   }
   o[a[a.length - 1]] = value;
+  return obj;
 }
 
 module.exports = Wrapper;
