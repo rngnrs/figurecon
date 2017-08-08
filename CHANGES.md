@@ -1,3 +1,7 @@
+0.3.2 / 2017-08-08
+===================
+  * Add `fs.existsSync()` before watching file
+
 0.3.1 / 2017-07-30
 ===================
   * Fix hooks

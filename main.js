@@ -15,33 +15,35 @@ Figurecon.init = (key, def, logger) => {
   Figurecon.defaults = def;
   Figurecon.hooks = {};
   Figurecon.logger = logger;
-  try {
-    Figurecon.config = require(path.resolve(key));
-  } catch (e) {
-    Figurecon.config = {};
-    logger('Syntax error?');
-  }
+  Figurecon.config = {};
 
-  watch(key, (eventType, fileName) => {
-    if (eventType !== 'update') {
-      return true;
-    }
-    let config = {};
+  if (fs.existsSync(key)) {
     try {
-      let id = require.resolve(path.resolve(fileName));
-      delete require.cache[id];
-      config = require(path.resolve(fileName));
+      Figurecon.config = require(path.resolve(key));
     } catch (e) {
-      return logger('Syntax error?');
+      logger('Syntax error?');
     }
-    let Diff = diff(Figurecon.config, config);
-    if (!Diff) {
-      return true;
-    }
-    for (let edit of Diff) {
-      Figurecon.set(edit.path.join('.'), edit.rhs);
-    }
-  });
+    watch(key, (eventType, fileName) => {
+      if (eventType !== 'update') {
+        return true;
+      }
+      let config = {};
+      try {
+        let id = require.resolve(path.resolve(fileName));
+        delete require.cache[id];
+        config = require(path.resolve(fileName));
+      } catch (e) {
+        return logger('Syntax error?');
+      }
+      let Diff = diff(Figurecon.config, config);
+      if (!Diff) {
+        return true;
+      }
+      for (let edit of Diff) {
+        Figurecon.set(edit.path.join('.'), edit.rhs);
+      }
+    });
+  }
   return Figurecon;
 };
 
