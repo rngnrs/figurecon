@@ -3,15 +3,15 @@ const path = require('path');
 const diff = require('deep-diff');
 const watch = require('node-watch');
 
-function Wrapper(key, def, logger) {
-  return Figurecon.init(key, def, logger || console.log);
+function Wrapper(key, def, watchFile, logger) {
+  return Figurecon.init(key, def, watchFile, logger || console.log);
 }
 
 function Figurecon(key, def) {
   return Figurecon.get(...arguments);
 }
 
-Figurecon.init = (key, def, logger) => {
+Figurecon.init = (key, def, watchFile, logger) => {
   Figurecon.defaults = def;
   Figurecon.hooks = {};
   Figurecon.logger = logger;
@@ -23,28 +23,42 @@ Figurecon.init = (key, def, logger) => {
     } catch (e) {
       logger('Syntax error?');
     }
-    watch(key, (eventType, fileName) => {
-      if (eventType !== 'update') {
-        return true;
-      }
-      let config = {};
-      try {
-        let id = require.resolve(path.resolve(fileName));
-        delete require.cache[id];
-        config = require(path.resolve(fileName));
-      } catch (e) {
-        return logger('Syntax error?');
-      }
-      let Diff = diff(Figurecon.config, config);
-      if (!Diff) {
-        return true;
-      }
-      for (let edit of Diff) {
-        Figurecon.set(edit.path.join('.'), edit.rhs);
-      }
-    });
+    if (watchFile) {
+      Figurecon.watchFile(key);
+    }
   }
   return Figurecon;
+};
+
+Figurecon.watchFile = (file) => {
+  Figurecon.watcher = watch(file, (eventType, fileName) => {
+    if (eventType !== 'update') {
+      return true;
+    }
+    let config = {};
+    try {
+      let id = require.resolve(path.resolve(fileName));
+      delete require.cache[id];
+      config = require(path.resolve(fileName));
+    } catch (e) {
+      return Figurecon.logger('Syntax error?');
+    }
+    let Diff = diff(Figurecon.config, config);
+    if (!Diff) {
+      return true;
+    }
+    for (let edit of Diff) {
+      Figurecon.set(edit.path.join('.'), edit.rhs);
+    }
+  });
+};
+
+Figurecon.unwatchFile = () => {
+  if (Figurecon.watcher) {
+    Figurecon.watcher.close();
+    return true;
+  }
+  return false;
 };
 
 Figurecon.get = (key, def) => {

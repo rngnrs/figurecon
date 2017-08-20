@@ -1,3 +1,7 @@
+0.4.0 / 2017-08-20
+===================
+  * Custom file watching (`watchFile`)
+  
 0.3.2 / 2017-08-08
 ===================
   * Add `fs.existsSync()` before watching file
