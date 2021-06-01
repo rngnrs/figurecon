@@ -1,5 +1,10 @@
-const assert = require('assert');
-const Figurecon = require('../main');
+import assert from "assert";
+import Figurecon from "../index.js";
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let map = {
   'host': 'localhost',
@@ -9,63 +14,49 @@ let map = {
   }
 };
 
-let config = new Figurecon("config.json", map);
+let config = new Figurecon(resolve(__dirname, "../config.json"), map);
 
 describe('Figurecon', function () {
 
-  it('присваивает функции конфигу', function () {
-    config.proxy = function() {
-      let proxy = config('system.fileDownloadProxy');
-      if (!proxy) {
-        return null;
-      }
-      let parts = proxy.replace(/https?:\/\//, '').split(':');
-      let auth = config('system.fileDownloadProxyAuth');
-      return {
-        "host": parts[0],
-        "port": parts[1]
-          ? Number(parts[1])
-          : null,
-        "auth": auth
-          ? 'Basic ' + Buffer.from(auth).toString('base64')
-          : null
-      };
-    };
-    let out = config.proxy();
-    assert(typeof out === 'object' && typeof out.host !== 'undefined' && out.port !== null);
+  it('returns a variable from file, not from defaults', function () {
+    assert.strictEqual(config.get('some.nested.value'), 42);
   });
 
-  it('отдаёт значения из файла, а не из стандартных параметров', function () {
-    // Console.log('Default value: ' + map.host);
-    // Console.log('Config value:  ' + config.config.host);
-    assert(typeof config('host') !== 'undefined');
-  });
-
-  it('отдаёт стандартное значение, если в файле его нет', function () {
+  it('returns default value if nothing is present', function () {
     let def = 'pururin';
-    assert(config(Math.floor(Math.random() * 1e6), def) === def);
+    assert.strictEqual(config.get(Math.floor(Math.random() * 1e6), def), def);
   });
 
-  it('присваивает функцию слежения', function () {
-    config.on('changeme', onChange);
-    config.on('changeme.zero', onChangeLocal);
-    assert(config.hooks.changeme.length > 0);
+  it('add hooks', function () {
+    let def = Math.floor(Math.random() * 1e6);
+    let key = 'changeme.zero';
+
+    let hook = (_key, oldValue, newValue) => {
+      assert.strictEqual(_key, key);
+      assert.strictEqual(newValue, def);
+
+      config.off(key, hook);
+    }
+
+    config.on(key, hook);
+    config.set(key, def);
   });
 
-  it('задаёт значение', function () {
+  it('create values', function () {
     config.set('changeme.zero', 28);
     config.set('changeme.first', 7);
     config.set('changeme.second', 2010);
+
+    assert.strictEqual(config.get('changeme.zero'), 28);
+    assert.strictEqual(config.get('changeme.first'), 7);
+    assert.strictEqual(config.get('changeme.second'), 2010);
+
     config.set('changeme.second', 2017);
-    config.set('changeme.first', 7);
+    assert.strictEqual(config.get('changeme.second'), 2017);
   });
 
-  function onChange(key, oldValue, newValue) {
-    console.log(key + ': I\'m changed from ' + JSON.stringify(oldValue) + ' to ' + JSON.stringify(newValue));
-  }
-
-  function onChangeLocal(key, oldValue, newValue) {
-    console.log(key + ': Woo-hoo! YAY! I\'m changed from ' + oldValue + ' to ' + newValue);
-  }
+  after(() => {
+    config.unwatch();
+  })
 
 });

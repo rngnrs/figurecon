@@ -1,3 +1,8 @@
+1.0.0 / 2021-06-01
+===================
+  * npm publishing
+  * ES6 modules support
+
 0.4.0 / 2017-08-20
 ===================
   * Custom file watching (`watchFile`)
