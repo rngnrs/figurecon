@@ -1,12 +1,12 @@
 {
   "name": "@rngnrs/figurecon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple real-time updating configuration module",
   "author": "rngnrs <sup@tumba.ch>",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "coverage": "c8 --temp-directory /tmp/c8/ npm test",
     "test": "mocha tests/*"
   },
   "repository": {
@@ -16,7 +16,12 @@
   "bugs": {
     "url": "https://github.com/rngnrs/figurecon/issues"
   },
-  "homepage": "https://github.com/rngnrs/figurecon#README",
+  "keywords": [
+    "conf",
+    "config",
+    "configuration"
+  ],
+  "homepage": "https://github.com/rngnrs/figurecon#readme",
   "dependencies": {
     "deep-diff": "^1.0.2",
     "node-watch": "^0.7.1"
@@ -25,6 +30,7 @@
     "node": ">= 13.0"
   },
   "devDependencies": {
+    "c8": "^7.7.2",
     "mocha": "^8.4.0"
   }
 }

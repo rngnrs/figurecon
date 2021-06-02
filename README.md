@@ -1,6 +1,10 @@
 # figurecon
 #### Simple configuration module with real-time updates
 
+[![install size](https://packagephobia.com/badge?p=@rngnrs/figurecon)](https://packagephobia.com/result?p=@rngnrs/figurecon)
+[![open issues](https://img.shields.io/github/issues/rngnrs/figurecon)](https://github.com/rngnrs/figurecon/issues)
+[![GitHub license](https://img.shields.io/github/license/rngnrs/figurecon)](https://github.com/rngnrs/figurecon/blob/master/LICENSE)
+
 ## Description
 This module is designed as a simple ES6-based advanced config module.
 
@@ -11,8 +15,8 @@ This module is designed as a simple ES6-based advanced config module.
 **Any method can be changed/removed in any time, so use it carefully!**
 
 ## Features
-- Update values on-the-fly
-- May use defaults if no custom config is present
+- Updates values on-the-fly (though [it can be disabled](#disable-watcher-completely))
+- May use defaults if there is no such value in main config
 - Supports update subscriptions (hooks)
 
 ## Installation

@@ -24,7 +24,8 @@ describe('Figurecon', function () {
 
   it('returns default value if nothing is present', function () {
     let def = 'pururin';
-    assert.strictEqual(config.get(Math.floor(Math.random() * 1e6), def), def);
+    let key = String(Math.floor(Math.random() * 1e6));
+    assert.strictEqual(config.get(key, def), def);
   });
 
   it('add hooks', function () {

@@ -83,6 +83,12 @@ export default class Figurecon {
 	}
 
 
+	/**
+	 *
+	 * @param key {String[]|String}
+	 * @param [def] {*}
+	 * @returns {*}
+	 */
 	get(key, def) {
 		let config = this.#deepGet(this.#config, key);
 		if (typeof config !== 'undefined') {
@@ -91,6 +97,12 @@ export default class Figurecon {
 		return def ?? this.#deepGet(this.#defaults, key);
 	}
 
+	/**
+	 *
+	 * @param key {String[]|String}
+	 * @param value {*}
+	 * @returns {boolean}
+	 */
 	set(key, value) {
 		let array = [];
 		if (this.get(key) === value) {
@@ -111,6 +123,12 @@ export default class Figurecon {
 		return true;
 	}
 
+	/**
+	 *
+	 * @param key {String[]|String}
+	 * @param hook {Function}
+	 * @returns {boolean|Function}
+	 */
 	on(key, hook) {
 		if (typeof hook !== 'function') {
 			return false;
@@ -124,9 +142,13 @@ export default class Figurecon {
 		return hook;
 	}
 
+	/**
+	 *
+	 * @param key {String[]|String}
+	 * @param hook {Function}
+	 */
 	off(key, hook) {
-		let list = this.#hooks[key];
-		this.#hooks[key] = list.filter(lhook => hook !== lhook);
+		this.#hooks[key] = this.#hooks[key].filter(lhook => hook !== lhook);
 	}
 
 	watch(watcher) {
@@ -158,18 +180,31 @@ export default class Figurecon {
 		return false;
 	}
 
+	/**
+	 *
+	 * @param root {Object}
+	 * @param path {String[]|String}
+	 * @returns {*}
+	 */
 	#deepGet(root, path) {
-		let ref = root;
-		path.toString().split('.').forEach(key => {
-			if (ref) {
-				ref = ref[key];
-			}
-		});
-		return ref;
+		if (!path) {
+			return;
+		}
+		const pathArray = Array.isArray(path)
+			? path
+			: this.#getPathArray(path);
+		return pathArray.reduce((prevObj, key) => prevObj && prevObj[key], root);
 	}
 
+	/**
+	 *
+	 * @param root {Object}
+	 * @param path {String[]|String}
+	 * @param value {*}
+	 * @returns {*}
+	 */
 	#deepSet(root, path, value) {
-		let arr = path.split('.');
+		let arr = this.#getPathArray(path);
 		let obj = root;
 		for (let i = 0; i < arr.length - 1; i++) {
 			let n = arr[i];
@@ -180,6 +215,10 @@ export default class Figurecon {
 		}
 		obj[arr[arr.length - 1]] = value;
 		return root;
+	}
+
+	#getPathArray(path) {
+		return String(path).match(/([^[.\]])+/g);
 	}
 
 }
