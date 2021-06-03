@@ -38,7 +38,7 @@ export default class Figurecon {
 				} else {
 					this.#fileName = file;
 					try {
-						this.#config = JSON.parse(await readFile(file));
+						this.#config = JSON.parse((await readFile(file)).toString());
 					} catch (e) {
 						if (['ENOENT'].includes(e.code)) {
 							return this.#logger(e.message);
@@ -79,6 +79,9 @@ export default class Figurecon {
 			watcher: Watch
 		}, options);
 
+		if (!file || !defaults) {
+			throw new Error('Not enough arguments');
+		}
 		return [file, defaults, options];
 	}
 
@@ -175,6 +178,7 @@ export default class Figurecon {
 	unwatch() {
 		if (this.#watcher) {
 			this.#watcher.close();
+			this.#watcher = null;
 			return true;
 		}
 		return false;
@@ -188,7 +192,7 @@ export default class Figurecon {
 	 */
 	#deepGet(root, path) {
 		if (!path) {
-			return;
+			throw new Error('No path is specified');
 		}
 		const pathArray = Array.isArray(path)
 			? path
