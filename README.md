@@ -134,7 +134,7 @@ If you want change a library, just use a wrapper that implements such interface:
 ```js
 // ...
 let WatchLib = require('node-watch'); // or any other
-let watcher = function (fileName, callback = async (eventType, fileName) => {}) {
+let watcher = function (fileName, callback = async (eventType = "update", fileName) => {}) {
   return WatchLib(fileName, callback);
 };
 config.watch(watcher);
@@ -149,6 +149,7 @@ const config = new Figurecon(configObject, defaults, {
   watcher: WatchLib
 });
 ```
+Otherwise, use `config.reload()` to do this job manually.
 
 ### Disable watcher (completely)
 If you want to disable updates, put `{ watch: false } ` in `options`:

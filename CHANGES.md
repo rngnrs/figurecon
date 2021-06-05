@@ -1,3 +1,14 @@
+1.1.0 / 2021-06-04
+===================
+  * Add wrappers both for `require` AND `import`
+  * Replace `deep-diff` module with custom solution 
+  * Add `log` option
+  * Add `reload()` method
+
+1.0.1 / 2021-06-03
+===================
+  * Add `c8` (coverage)
+
 1.0.0 / 2021-06-01
 ===================
   * npm publishing
