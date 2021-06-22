@@ -1,3 +1,7 @@
+1.1.1 / 2021-06-22
+==================
+  * Add dummy logger function (closes #2)
+
 1.1.0 / 2021-06-04
 ===================
   * Add wrappers both for `require` AND `import`
