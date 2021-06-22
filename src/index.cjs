@@ -7,7 +7,7 @@ module.exports = class Figurecon {
 	#defaults;
 	#hooks;
 
-	#logger;
+	#logger = () => {};
 	#watcher;
 	#fileName;
 
