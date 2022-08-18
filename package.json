@@ -1,6 +1,6 @@
 {
   "name": "@rngnrs/figurecon",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Simple real-time updating configuration module",
   "author": "rngnrs <sup@tumba.ch>",
   "main": "index.cjs",
@@ -27,6 +27,7 @@
   ],
   "homepage": "https://github.com/rngnrs/figurecon#readme",
   "dependencies": {
+    "fast-deep-equal": "^3.1.3",
     "json-key-path-list": "^1.0.0",
     "node-watch": "^0.7.1"
   },

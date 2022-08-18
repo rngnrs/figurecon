@@ -14,13 +14,13 @@ module.exports = class Figurecon {
 	/**
 	 * Represents a Figurecon instance.
 	 * @constructor
-	 * @param file {String|Object}
-	 * @param defaults {Object}
-	 * @param [options] {Object}
-	 * @param [options.log] {Boolean}
-	 * @param [options.logger] {Function}
-	 * @param [options.watch] {Boolean}
-	 * @param [options.watcher] {Function}
+	 * @param {String|Object} file
+	 * @param {Object} defaults
+	 * @param {Object} [options]
+	 * @param {Boolean} [options.log]
+	 * @param {Function} [options.logger]
+	 * @param {Boolean} [options.watch]
+	 * @param {Function} [options.watcher]
 	 */
 	constructor(
 		file,
@@ -105,7 +105,7 @@ module.exports = class Figurecon {
 		if (typeof config !== 'undefined') {
 			return config;
 		}
-		return def ?? this.#deepGet(this.#defaults, key);
+		return this.#deepGet(this.#defaults, key) ?? def;
 	}
 
 	/**

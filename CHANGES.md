@@ -1,3 +1,9 @@
+1.2.0 / 2022-08-18
+==================
+  * Prefer global defaults instead of local
+  * Refactor tests
+  * Replace `util.isDeepStrictEqual` with `fast-deep-equal`
+
 1.1.1 / 2021-06-22
 ==================
   * Add dummy logger function (closes #2)
