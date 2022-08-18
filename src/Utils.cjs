@@ -1,4 +1,4 @@
-const isEqual = require('util').isDeepStrictEqual;
+const isEqual = require('fast-deep-equal');
 
 function get(obj, path, defValue) {
 	if (!path) {
